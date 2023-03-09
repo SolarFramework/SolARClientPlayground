@@ -1,16 +1,31 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
+using UnityEditor;
+
 namespace Bcom.SharedPlayground
 {
+    public enum PrefabType
+    {
+        Cube,
+        Sphere
+        // TODO: add more object prefabs
+    };
+
+    // [CreateAssetMenu(fileName = "PrefabList", menuName = "SharedPlayground")]
+    // public class PrefabObject : ScriptableObject
+    // {
+    //     PrefabType prefabType;
+    //     GameObject prefab;
+    // };
+
     /// <summary>
     /// Class to display helper buttons and status labels on the GUI, as well as buttons to start host/client/server.
     /// Once a connection has been established to the server, the local player can be teleported to random positions via a GUI button.
     /// </summary>
     public class PlaygroundManager : MonoBehaviour
     {
-        public GameObject[] prefabs;
-
 #if UNITY_SERVER
         private void Start()
         {
@@ -50,23 +65,24 @@ namespace Bcom.SharedPlayground
                 // "Random Teleport" button will only be shown to clients
                 if (networkManager.IsClient)
                 {
-                    if (GUILayout.Button("Random Teleport client object"))
+                    foreach (PrefabType prefabType in System.Enum.GetValues(typeof(PrefabType)))
                     {
-                        if (networkManager.LocalClient != null)
+                        if (GUILayout.Button($"Create {prefabType.ToString()}"))
                         {
-                            if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                            if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
                             {
-                                playgroundPlayer.RandomTeleportObjectClientRpc();
+                                playgroundPlayer.CreateObject(prefabType);
                             }
                         }
                     }
-                    if (GUILayout.Button("Create cube"))
+
+                    if (GUILayout.Button("Drop Object"))
                     {
-                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
                         {
-                            playgroundPlayer.CreateObjectServerRpc();
+                            playgroundPlayer.DropObject();
                         }
-                    }
+                    }                        
                 }
             }
 
