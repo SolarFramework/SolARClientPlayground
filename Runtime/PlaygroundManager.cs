@@ -32,7 +32,7 @@ namespace Bcom.SharedPlayground
             var networkManager = NetworkManager.Singleton;
             Debug.Log("Starting server");
             networkManager.StartServer();
-            Debug.Log("Server started. hostname=" + networkManager.ConnectedHostname);
+            Debug.Log("Server started!");
         }
 #endif
 
@@ -82,7 +82,16 @@ namespace Bcom.SharedPlayground
                         {
                             playgroundPlayer.DropObject();
                         }
-                    }                        
+                    }
+
+                    if (GUILayout.Button("Grab Nearest Object"))
+                    {
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
+                        {
+                            var objectToGrab = PlaygroundInteractable.FindNearestInteractable(playgroundPlayer.transform.position);
+                            playgroundPlayer.GrabObject(objectToGrab);
+                        }
+                    }
                 }
             }
 

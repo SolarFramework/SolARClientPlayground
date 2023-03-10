@@ -25,9 +25,10 @@ namespace Bcom.SharedPlayground
         public void CreateObject(PrefabType prefabType)
         {
             // Check if the player was already owning an object
-            if (grabbedObject)
+            if (grabbedObject != null)
             {
-                DropObject();
+                Debug.LogWarning("Player has already grabbed an object!");
+                return;
             }
             // Create the new object and give its ownership to the player
             CreateObjectServerRpc(prefabType);
@@ -42,20 +43,17 @@ namespace Bcom.SharedPlayground
             }
 
             RemoveObjectOwnershipServerRpc(grabbedObject);
-            grabbedObject = null;
         }
 
-        public void GrabObject()
+        public void GrabObject(GameObject objectTograb)
         {
-            if (grabbedObject)
+            if (grabbedObject != null)
             {
-                DropObject();
+                Debug.LogWarning("Player has already grabbed an object!");
+                return;
             }
 
-        //TODO
-            //var nearestGO = PlaygroundInteractable.FindNearestInteractable(transform.position);
-            //RequestObjectOwnershipServerRpc(nearestGO);
-
+            RequestObjectOwnershipServerRpc(objectTograb);
         }
 
         [ClientRpc]
