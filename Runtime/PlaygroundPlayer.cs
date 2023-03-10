@@ -6,7 +6,7 @@ namespace Bcom.SharedPlayground
 
     public class PlaygroundPlayer : NetworkBehaviour
     {
-        public GameObject[] spawnablePrefabsList;
+        public PlaygroundPrefabsScriptableObject spawnablePrefabsList;
 
         public GameObject grabbedObject = null;
 
@@ -73,7 +73,7 @@ namespace Bcom.SharedPlayground
         [ServerRpc]
         public void CreateObjectServerRpc(PrefabType prefabType, ServerRpcParams serverRpcParams = default)
         {
-            grabbedObject = Instantiate(spawnablePrefabsList[(int)prefabType]);
+            grabbedObject = Instantiate(spawnablePrefabsList.prefabs[(int)prefabType]);
             var newNetworkObject = grabbedObject.GetComponent<NetworkObject>();
             newNetworkObject.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
             newNetworkObject.DontDestroyWithOwner = true;

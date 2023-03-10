@@ -2,7 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Note: server side only
+namespace Bcom.SharedPlayground
+{
+
+public enum PrefabType
+{
+    Cube,
+    Sphere
+    // TODO: add more object prefabs
+};
+
 public class PlaygroundInteractable : MonoBehaviour
 {
     public static readonly HashSet<PlaygroundInteractable> interactables = new HashSet<PlaygroundInteractable>();
@@ -31,4 +40,29 @@ public class PlaygroundInteractable : MonoBehaviour
         }
         return nearestGO;
     }
+
+    [System.Serializable]
+    public class SerializableObjectData
+    {
+        public string objectName = "";
+        public Vector3 position = Vector3.zero;
+        public Quaternion rotation = Quaternion.identity;
+        public Vector3 scale = Vector3.one;
+        public PrefabType objectType = PrefabType.Cube;
+    };
+
+    public PrefabType m_type = PrefabType.Cube;
+
+    public SerializableObjectData Serialize()
+    {
+        SerializableObjectData objectData = new SerializableObjectData();
+        objectData.objectName = name;
+        objectData.position = transform.localPosition;
+        objectData.rotation = transform.localRotation;
+        objectData.scale = transform.localScale;
+        objectData.objectType = m_type;
+
+        return objectData;
+    }
+}
 }

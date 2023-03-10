@@ -6,20 +6,6 @@ using UnityEditor;
 
 namespace Bcom.SharedPlayground
 {
-    public enum PrefabType
-    {
-        Cube,
-        Sphere
-        // TODO: add more object prefabs
-    };
-
-    // [CreateAssetMenu(fileName = "PrefabList", menuName = "SharedPlayground")]
-    // public class PrefabObject : ScriptableObject
-    // {
-    //     PrefabType prefabType;
-    //     GameObject prefab;
-    // };
-
     /// <summary>
     /// Class to display helper buttons and status labels on the GUI, as well as buttons to start host/client/server.
     /// Once a connection has been established to the server, the local player can be teleported to random positions via a GUI button.
