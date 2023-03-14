@@ -29,10 +29,10 @@ public class PlaygroundInteractable : MonoBehaviour
     {
         GameObject nearestGO = null;
         float distance = 10000f;
-        foreach( var interactable in interactables)
+        foreach ( var interactable in interactables)
         {
             float newDistance = (interactable.transform.position - position).magnitude;
-            if( newDistance < distance)
+            if ( newDistance < distance )
             {
                 distance = newDistance;
                 nearestGO = interactable.gameObject;

@@ -98,8 +98,15 @@ namespace Bcom.SharedPlayground
         public void RequestObjectOwnershipServerRpc(NetworkObjectReference serverObjectRef, ServerRpcParams serverRpcParams = default)
         {
             NetworkObject networkObject = serverObjectRef;
-            networkObject.ChangeOwnership(serverRpcParams.Receive.SenderClientId);
             NetworkLog.LogInfoServer("Player requested object ownership");
+            // Check if the object is not already grabbed by another player
+            if (!networkObject.IsOwnedByServer)
+            {
+                NetworkLog.LogInfoServer("WARNING: Object is still in use by another player!");
+                return;
+            }
+
+            networkObject.ChangeOwnership(serverRpcParams.Receive.SenderClientId);
 
             // Notify all clients that this player has grabbed a new object
             GrabObjectClientRpc(networkObject);
