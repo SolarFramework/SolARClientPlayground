@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 using UnityEditor;
@@ -12,15 +13,21 @@ namespace Bcom.SharedPlayground
     /// </summary>
     public class PlaygroundManager : MonoBehaviour
     {
-#if UNITY_SERVER
+        public ScenePersistency scenePersistency;
+
         private void Start()
         {
-            var networkManager = NetworkManager.Singleton;
+#if UNITY_SERVER
             Debug.Log("Starting server");
-            networkManager.StartServer();
-            Debug.Log("Server started!");
+            NetworkManager.Singleton.StartServer();
+            Debug.Log($"Server started!");
+#else
+            // var unityTransport = GetComponent<UnityTransport>();
+            // unityTransport.ConnectionData.Address = "172.18.248.191";
+            // NetworkManager.Singleton.StartClient();
+            // Debug.Log($"Connecting to server (ip={unityTransport.ConnectionData.Address})");
+#endif // UNITY_SERVER
         }
-#endif
 
         private void OnGUI()
         {
@@ -75,8 +82,26 @@ namespace Bcom.SharedPlayground
                         if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
                         {
                             var objectToGrab = PlaygroundInteractable.FindNearestInteractable(playgroundPlayer.transform.position);
-                            playgroundPlayer.GrabObject(objectToGrab);
+                            if (objectToGrab)
+                            {
+                                playgroundPlayer.GrabObject(objectToGrab);
+                            }
                         }
+                    }
+                }
+                else
+                {
+                    if (GUILayout.Button("LoadScene"))
+                    {
+                        scenePersistency.LoadSceneState();
+                    }
+                    if (GUILayout.Button("SaveScene"))
+                    {
+                        scenePersistency.SaveSceneState();
+                    }
+                    if (GUILayout.Button("ClearScene"))
+                    {
+                        scenePersistency.CleanupScene();
                     }
                 }
             }

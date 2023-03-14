@@ -33,9 +33,9 @@ class BuildServer
             Directory.CreateDirectory(buildPath);
         }
 
-        BuildTarget target = BuildTarget.StandaloneWindows64;
+        BuildTarget target = BuildTarget.StandaloneLinux64;
         string ext = target == BuildTarget.StandaloneWindows64 ? ".exe" : "";
-        string archDir = target == BuildTarget.StandaloneWindows64 ? "Win64/" : "Linux64";
+        string archDir = target == BuildTarget.StandaloneWindows64 ? "Win64/" : "Linux64/";
 
         BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
         buildPlayerOptions.locationPathName = Path.Combine(buildPath, archDir + "SharedPlayground" + ext);
