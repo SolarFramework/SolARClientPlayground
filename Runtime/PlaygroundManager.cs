@@ -13,7 +13,8 @@ namespace Bcom.SharedPlayground
     /// </summary>
     public class PlaygroundManager : MonoBehaviour
     {
-        public ScenePersistency scenePersistency;
+        public GameObject sceneRootPrefab;
+        private ScenePersistency scenePersistency;
 
         private void Start()
         {
@@ -21,6 +22,10 @@ namespace Bcom.SharedPlayground
             Debug.Log("Starting server");
             NetworkManager.Singleton.StartServer();
             Debug.Log($"Server started!");
+            // Spawn scene root to manage playground objects
+            var sceneRoot = Instantiate(sceneRootPrefab);
+            scenePersistency = sceneRoot.GetComponent<ScenePersistency>();
+            sceneRoot.GetComponent<NetworkObject>().Spawn();
 #else
             // var unityTransport = GetComponent<UnityTransport>();
             // unityTransport.ConnectionData.Address = "172.18.248.191";
@@ -87,6 +92,19 @@ namespace Bcom.SharedPlayground
                                 playgroundPlayer.GrabObject(objectToGrab);
                             }
                         }
+                    }
+
+                    if (GUILayout.Button("LoadScene"))
+                    {
+                        FindObjectOfType<ScenePersistency>().LoadSceneStateServerRpc();
+                    }
+                    if (GUILayout.Button("SaveScene"))
+                    {
+                        FindObjectOfType<ScenePersistency>().SaveSceneStateServerRpc();
+                    }
+                    if (GUILayout.Button("ClearScene"))
+                    {
+                        FindObjectOfType<ScenePersistency>().CleanUpSceneServerRpc();
                     }
                 }
                 else

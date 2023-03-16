@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7b2b218830456e4ba75f0f5687526e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneRootPrefab: {fileID: 4167939884575259536, guid: 08ca33ef6c9b6f649b98e4e1a07fce5a, type: 3}
+  scenePersistency: {fileID: 0}
 --- !u!114 &6087710904942667864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,6 +67,11 @@ MonoBehaviour:
     NetworkTransport: {fileID: 6087710904942667813}
     PlayerPrefab: {fileID: 4822207394829774503, guid: 58d0d69fece5e364e984eb5d65449376, type: 3}
     NetworkPrefabs:
+    - Override: 0
+      Prefab: {fileID: 4167939884575259536, guid: 08ca33ef6c9b6f649b98e4e1a07fce5a, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
     - Override: 0
       Prefab: {fileID: 784432303259881861, guid: 773dc4be94fe8ee43a0d33cc790d77b3, type: 3}
       SourcePrefabToOverride: {fileID: 8459088890798427466, guid: 5a7f801b448f7e14aac5e34e989f6969, type: 3}
