@@ -2,10 +2,15 @@ using UnityEngine;
 
 public class AnimateObject : MonoBehaviour
 {
+    public Vector3 translationAxis = Vector3.up;
+    public Vector3 rotationAxis = Vector3.up;
+
     [Range(0f, 10f)]
     public float animationDuration = 5f;
     [Range(0f, 1f)]
     public float animationAmplitude = .1f;
+
+    public AnimationCurve animationCurve;
 
     private Quaternion initialRotation;
     private Vector3 initialPosition;
@@ -28,10 +33,9 @@ public class AnimateObject : MonoBehaviour
     void FixedUpdate()
     {
         time += Time.fixedDeltaTime;
-        float angle = 2f * Mathf.PI * time / animationDuration;
-        var delta = animationAmplitude * Mathf.Sin(angle) * Vector3.up;
-        transform.position = initialPosition + delta;
+        float value = animationCurve.Evaluate(time / animationDuration);
+        transform.position = initialPosition + animationAmplitude * value * translationAxis;
 
-        transform.Rotate(Vector3.up, animationDuration / 360f / Time.fixedDeltaTime);
+        transform.Rotate(rotationAxis, (.5f * animationDuration / 360f) / Time.fixedDeltaTime);
     }
 }

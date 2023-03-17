@@ -23,6 +23,7 @@ namespace Bcom.SharedPlayground
         Stand_noisemakers,
         Stand_pico,
         Stand_senseglove,
+        Exit,
         // TODO: add more object prefabs
     };
 
