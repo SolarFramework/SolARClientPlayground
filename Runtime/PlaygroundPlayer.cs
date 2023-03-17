@@ -56,16 +56,36 @@ namespace Bcom.SharedPlayground
             RequestObjectOwnershipServerRpc(objectTograb);
         }
 
+        public void DestroyObject()
+        {
+            if (grabbedObject == null)
+            {
+                Debug.LogWarning("No grabbed object at the moment, nothing to destroy!");
+                return;
+            }
+
+            DespawnObjectServerRpc(grabbedObject);
+        }
+
         [ClientRpc]
         public void GrabObjectClientRpc(NetworkObjectReference clientObjectRef)
         {
             NetworkLog.LogInfoServer("Grabbed item");
             grabbedObject = clientObjectRef;
+            if (grabbedObject.TryGetComponent(out AnimateObject animateObject))
+            {
+                animateObject.enabled = false;
+            }
         }
 
         [ClientRpc]
-        public void DropObjectClientRpc()
+        public void DropObjectClientRpc(NetworkObjectReference serverObjectRef)
         {
+            GameObject serverObject = serverObjectRef;
+            if (serverObject.TryGetComponent(out AnimateObject animateObject))
+            {
+                animateObject.enabled = true;
+            }
             NetworkLog.LogInfoServer("Dropped item");
             grabbedObject = null;
         }
@@ -74,6 +94,10 @@ namespace Bcom.SharedPlayground
         public void CreateObjectServerRpc(PrefabType prefabType, ServerRpcParams serverRpcParams = default)
         {
             grabbedObject = Instantiate(spawnablePrefabsList.prefabs[(int)prefabType]);
+            if (grabbedObject.TryGetComponent(out AnimateObject animateObject))
+            {
+                animateObject.enabled = false;
+            }
             var newNetworkObject = grabbedObject.GetComponent<NetworkObject>();
             newNetworkObject.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
             newNetworkObject.DontDestroyWithOwner = true;
@@ -86,18 +110,26 @@ namespace Bcom.SharedPlayground
         [ServerRpc]
         public void RemoveObjectOwnershipServerRpc(NetworkObjectReference clientObjectRef, ServerRpcParams serverRpcParams = default)
         {
+            grabbedObject = null;
             NetworkObject networkObject = clientObjectRef;
             networkObject.RemoveOwnership();
             NetworkLog.LogInfoServer("Player gave object ownership back to the server");
-
+            if (networkObject.TryGetComponent(out AnimateObject animateObject))
+            {
+                animateObject.enabled = true;
+            }
             // Notify all clients that this player has dropped its object
-            DropObjectClientRpc();
+            DropObjectClientRpc(networkObject);
         }
 
         [ServerRpc]
         public void RequestObjectOwnershipServerRpc(NetworkObjectReference serverObjectRef, ServerRpcParams serverRpcParams = default)
         {
             NetworkObject networkObject = serverObjectRef;
+            if (networkObject.TryGetComponent(out AnimateObject animateObject))
+            {
+                animateObject.enabled = false;
+            }
             NetworkLog.LogInfoServer("Player requested object ownership");
             // Check if the object is not already grabbed by another player
             if (!networkObject.IsOwnedByServer)
@@ -107,7 +139,7 @@ namespace Bcom.SharedPlayground
             }
 
             networkObject.ChangeOwnership(serverRpcParams.Receive.SenderClientId);
-
+            grabbedObject = networkObject.gameObject;
             // Notify all clients that this player has grabbed a new object
             GrabObjectClientRpc(networkObject);
         }
