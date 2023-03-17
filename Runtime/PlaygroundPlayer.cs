@@ -111,5 +111,15 @@ namespace Bcom.SharedPlayground
             // Notify all clients that this player has grabbed a new object
             GrabObjectClientRpc(networkObject);
         }
+
+        [ServerRpc]
+        public void DespawnObjectServerRpc(NetworkObjectReference clientObjectRef)
+        {
+            // Notify all clients that this player has dropped its object
+            DropObjectClientRpc(clientObjectRef);
+
+            NetworkObject networkObject = clientObjectRef;
+            networkObject.Despawn();
+        }
     }
 }

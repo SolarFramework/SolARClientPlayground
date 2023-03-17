@@ -16,6 +16,8 @@ namespace Bcom.SharedPlayground
         public GameObject sceneRootPrefab;
         private ScenePersistency scenePersistency;
 
+        public Vector2 scrollPosition;
+
         private void Start()
         {
 #if UNITY_SERVER
@@ -63,6 +65,8 @@ namespace Bcom.SharedPlayground
                 // "Random Teleport" button will only be shown to clients
                 if (networkManager.IsClient)
                 {
+
+                    scrollPosition = GUILayout.BeginScrollView(scrollPosition);
                     foreach (PrefabType prefabType in System.Enum.GetValues(typeof(PrefabType)))
                     {
                         if (GUILayout.Button($"Create {prefabType.ToString()}"))
@@ -73,6 +77,9 @@ namespace Bcom.SharedPlayground
                             }
                         }
                     }
+
+                    GUILayout.EndScrollView();
+
 
                     if (GUILayout.Button("Drop Object"))
                     {
@@ -91,6 +98,14 @@ namespace Bcom.SharedPlayground
                             {
                                 playgroundPlayer.GrabObject(objectToGrab);
                             }
+                        }
+                    }
+
+                    if (GUILayout.Button("Destroy Object"))
+                    {
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                        {
+                            playgroundPlayer.DestroyObject();
                         }
                     }
 
