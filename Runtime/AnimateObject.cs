@@ -14,7 +14,6 @@ namespace Bcom.SharedPlayground
 
         public AnimationCurve animationCurve;
 
-        private Quaternion initialRotation;
         private Vector3 initialPosition;
 
         private float time;
@@ -22,13 +21,12 @@ namespace Bcom.SharedPlayground
         private void OnEnable()
         {
             time = 0f;
-            initialRotation = transform.rotation;
             initialPosition = transform.position;
         }
 
         private void OnDisable()
         {
-            transform.rotation = initialRotation;
+            transform.rotation = Quaternion.identity;
             transform.position = initialPosition;
         }
 

@@ -57,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4373227572957583994, guid: c4c81897f46a7a44a90681489fa4eadc, type: 3}
       propertyPath: m_Name
-      value: SP_Cube 1
+      value: SP_Cube
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c4c81897f46a7a44a90681489fa4eadc, type: 3}

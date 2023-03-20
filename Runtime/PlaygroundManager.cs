@@ -16,7 +16,7 @@ namespace Bcom.SharedPlayground
         public GameObject sceneRootPrefab;
         private ScenePersistency scenePersistency;
 
-        public Vector2 scrollPosition;
+        private Vector2 scrollPosition;
 
         private void Start()
         {
@@ -73,7 +73,7 @@ namespace Bcom.SharedPlayground
                         {
                             if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
                             {
-                                playgroundPlayer.CreateObject(prefabType);
+                                playgroundPlayer.CreateObject(prefabType, FindObjectOfType<ScenePersistency>().gameObject);
                             }
                         }
                     }

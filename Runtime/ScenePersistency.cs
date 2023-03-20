@@ -44,7 +44,7 @@ namespace Bcom.SharedPlayground
 
             foreach (var objectToLoad in objectsToLoad.persistentObjects)
             {
-                GameObject loadedObject = Instantiate(spawnablePrefabsList.prefabs[(int)objectToLoad.objectType], sceneRoot);
+                GameObject loadedObject = Instantiate(spawnablePrefabsList.prefabs[(int)objectToLoad.objectType]);
                 loadedObject.name = objectToLoad.objectName;
                 loadedObject.transform.localPosition = objectToLoad.position;
                 loadedObject.transform.localRotation = objectToLoad.rotation;
@@ -54,6 +54,7 @@ namespace Bcom.SharedPlayground
 
                 // Call to Spawn the object on the network
                 loadedObject.GetComponent<NetworkObject>().Spawn();
+                loadedObject.transform.parent = sceneRoot;
             }
             Debug.Log($"Loading scene from {PERSISTENT_SCENE_DATA_PATH}");
         }
