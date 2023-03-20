@@ -111,14 +111,26 @@ namespace Bcom.SharedPlayground
 
                     if (GUILayout.Button("LoadScene"))
                     {
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                        {
+                            playgroundPlayer.DropObject();
+                        }
                         FindObjectOfType<ScenePersistency>().LoadSceneStateServerRpc();
                     }
                     if (GUILayout.Button("SaveScene"))
                     {
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                        {
+                            playgroundPlayer.DropObject();
+                        }
                         FindObjectOfType<ScenePersistency>().SaveSceneStateServerRpc();
                     }
                     if (GUILayout.Button("ClearScene"))
                     {
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                        {
+                            playgroundPlayer.DropObject();
+                        }
                         FindObjectOfType<ScenePersistency>().CleanUpSceneServerRpc();
                     }
                 }

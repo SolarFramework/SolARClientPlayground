@@ -49,6 +49,9 @@ namespace Bcom.SharedPlayground
                 loadedObject.transform.localPosition = objectToLoad.position;
                 loadedObject.transform.localRotation = objectToLoad.rotation;
                 loadedObject.transform.localScale = objectToLoad.scale;
+
+                loadedObject.GetComponent<PlaygroundInteractable>().Animate(true);
+
                 // Call to Spawn the object on the network
                 loadedObject.GetComponent<NetworkObject>().Spawn();
             }
@@ -62,7 +65,11 @@ namespace Bcom.SharedPlayground
             Persistent3DObjects objectsToSave = new Persistent3DObjects();
             foreach (var interactable in PlaygroundInteractable.interactables)
             {
+                interactable.Animate(false);
+
                 objectsToSave.persistentObjects.Add(interactable.Serialize());
+
+                interactable.Animate(true);
             }
 
             string jsonData = JsonUtility.ToJson(objectsToSave, true);

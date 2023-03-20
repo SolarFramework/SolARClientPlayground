@@ -30,14 +30,23 @@ namespace Bcom.SharedPlayground
     public class PlaygroundInteractable : MonoBehaviour
     {
         public static readonly HashSet<PlaygroundInteractable> interactables = new HashSet<PlaygroundInteractable>();
+        AnimateObject animateObject;
+
         void Awake()
         {
             interactables.Add(this);
+            TryGetComponent<AnimateObject>(out animateObject);
         }
 
         void OnDestroy()
         {
             interactables.Remove(this);
+        }
+
+        public void Animate(bool value)
+        {
+            if (animateObject != null)
+                animateObject.enabled = value;
         }
 
         public static GameObject FindNearestInteractable(Vector3 position)
