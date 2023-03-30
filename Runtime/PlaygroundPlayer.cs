@@ -72,14 +72,12 @@ namespace Bcom.SharedPlayground
         {
             NetworkLog.LogInfoServer("Grabbed item");
             grabbedObject = clientObjectRef;
-            grabbedObject.GetComponent<PlaygroundInteractable>().Animate(false);
         }
 
         [ClientRpc]
         public void DropObjectClientRpc(NetworkObjectReference serverObjectRef)
         {
             GameObject serverObject = serverObjectRef;
-            serverObject.GetComponent<PlaygroundInteractable>().Animate(true);
             NetworkLog.LogInfoServer("Dropped item");
             grabbedObject = null;
         }

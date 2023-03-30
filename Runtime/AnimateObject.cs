@@ -15,6 +15,7 @@ namespace Bcom.SharedPlayground
         public AnimationCurve animationCurve;
 
         private Vector3 initialPosition;
+        private Quaternion initialRotation;
 
         private float time;
 
@@ -22,11 +23,12 @@ namespace Bcom.SharedPlayground
         {
             time = 0f;
             initialPosition = transform.position;
+            initialRotation = transform.rotation;
         }
 
         private void OnDisable()
         {
-            transform.rotation = Quaternion.identity;
+            transform.rotation = initialRotation;
             transform.position = initialPosition;
         }
 
@@ -34,7 +36,7 @@ namespace Bcom.SharedPlayground
         {
             time += Time.fixedDeltaTime;
             float value = animationCurve.Evaluate(time / animationDuration);
-            transform.position = initialPosition + animationAmplitude * value * translationAxis;
+            transform.position = initialPosition + animationAmplitude * value * transform.TransformDirection(translationAxis);
 
             transform.Rotate(rotationAxis, (.5f * animationDuration / 360f) / Time.fixedDeltaTime);
         }
