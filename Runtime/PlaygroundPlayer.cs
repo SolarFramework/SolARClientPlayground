@@ -67,6 +67,12 @@ namespace Bcom.SharedPlayground
             DespawnObjectServerRpc(grabbedObject);
         }
 
+        public void Disconnect()
+        {
+            DropObject();
+            RequestDisconnectServerRpc();
+        }
+
         [ClientRpc]
         public void GrabObjectClientRpc(NetworkObjectReference clientObjectRef)
         {
@@ -137,6 +143,13 @@ namespace Bcom.SharedPlayground
 
             NetworkObject networkObject = clientObjectRef;
             networkObject.Despawn();
+        }
+
+        [ServerRpc]
+        public void RequestDisconnectServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            NetworkLog.LogInfoServer("Player sent disconnect");
+            NetworkManager.Singleton.DisconnectClient(serverRpcParams.Receive.SenderClientId);
         }
     }
 }

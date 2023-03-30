@@ -65,6 +65,13 @@ namespace Bcom.SharedPlayground
                 // "Random Teleport" button will only be shown to clients
                 if (networkManager.IsClient)
                 {
+                    if (GUILayout.Button("Disconnect"))
+                    {
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
+                        {
+                            playgroundPlayer.Disconnect();
+                        }
+                    }
 
                     scrollPosition = GUILayout.BeginScrollView(scrollPosition);
                     foreach (PrefabType prefabType in System.Enum.GetValues(typeof(PrefabType)))
