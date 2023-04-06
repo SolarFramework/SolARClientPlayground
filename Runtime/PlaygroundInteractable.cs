@@ -24,6 +24,7 @@ namespace Bcom.SharedPlayground
         Stand_pico,
         Stand_senseglove,
         Exit,
+        Mascotte,
         // TODO: add more object prefabs
     };
 
