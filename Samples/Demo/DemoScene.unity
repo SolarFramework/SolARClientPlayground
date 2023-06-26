@@ -308,6 +308,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 6087710904942667813, guid: e85941103be85544bb795d4636e8406f, type: 3}
+      propertyPath: ConnectionData.Port
+      value: 32767
+      objectReference: {fileID: 0}
     - target: {fileID: 6087710904942667865, guid: e85941103be85544bb795d4636e8406f, type: 3}
       propertyPath: m_Name
       value: SharedPlayground
