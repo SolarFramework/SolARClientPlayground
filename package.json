@@ -3,7 +3,7 @@
     "version": "1.0.2",
     "displayName": "Shared Playground",
     "description": "3D Assets Synchronization for AR",
-    "unity": "2021.1",
+    "unity": "2021.3",
     "dependencies": {
         "com.unity.netcode.gameobjects": "1.5.1"
     },

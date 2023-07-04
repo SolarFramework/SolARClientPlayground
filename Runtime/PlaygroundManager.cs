@@ -21,9 +21,10 @@ namespace Bcom.SharedPlayground
         private void Start()
         {
 #if UNITY_SERVER
+            var unityTransport = GetComponent<UnityTransport>();
             Debug.Log("Starting server");
             NetworkManager.Singleton.StartServer();
-            Debug.Log($"Server started!");
+            Debug.Log($"Server started! Listening on {unityTransport.ConnectionData.Address}:{unityTransport.ConnectionData.Port}");
             // Spawn scene root to manage playground objects
             var sceneRoot = Instantiate(sceneRootPrefab);
             scenePersistency = sceneRoot.GetComponent<ScenePersistency>();
