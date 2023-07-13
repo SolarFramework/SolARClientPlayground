@@ -48,6 +48,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
   DontDestroyWithOwner: 1
   AutoObjectParentSync: 1
 --- !u!114 &-6945440877904629022
@@ -74,8 +78,12 @@ MonoBehaviour:
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
   InLocalSpace: 1
   Interpolate: 1
+  SlerpPosition: 0
 --- !u!114 &-1018343940982148477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,4 +96,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70e0680478fe4ad49b8e719ffcff659a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_type: 0
+  networkPrefabsList: {fileID: 11400000, guid: 27d64b5e9f0657c4c83d3c82a8f56d1c, type: 2}

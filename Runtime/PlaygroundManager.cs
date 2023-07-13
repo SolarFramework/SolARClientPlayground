@@ -1,9 +1,6 @@
-using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
-
-using UnityEditor;
 
 namespace Bcom.SharedPlayground
 {
@@ -18,6 +15,11 @@ namespace Bcom.SharedPlayground
 
         private Vector2 scrollPosition;
 
+        public ushort port;
+        public string overrideIP = "";
+
+        private bool connected = false;
+
         private void Start()
         {
 #if UNITY_SERVER
@@ -29,14 +31,59 @@ namespace Bcom.SharedPlayground
             var sceneRoot = Instantiate(sceneRootPrefab);
             scenePersistency = sceneRoot.GetComponent<ScenePersistency>();
             sceneRoot.GetComponent<NetworkObject>().Spawn();
-#else
-            // var unityTransport = GetComponent<UnityTransport>();
-            // unityTransport.ConnectionData.Address = "172.18.248.191";
-            // NetworkManager.Singleton.StartClient();
-            // Debug.Log($"Connecting to server (ip={unityTransport.ConnectionData.Address})");
 #endif // UNITY_SERVER
         }
 
+        protected void Configure()
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnConnect;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnDisconnect;
+        }
+
+        protected void Connect(string frontendIp)
+        {
+            var unityTransport = GetComponent<UnityTransport>();
+            // Use same ip as SolAR frontend (without http:// and port)
+            string ipWithoutHTTP = overrideIP == "" ? frontendIp.Substring(7) : overrideIP;
+            unityTransport.ConnectionData.Address = ipWithoutHTTP.Split(':')[0];
+            unityTransport.ConnectionData.Port = port;
+            Debug.Log($"Connecting to 3D Assets Sync server at {unityTransport.ConnectionData.Address}:{unityTransport.ConnectionData.Port}");
+
+            if (!NetworkManager.Singleton.StartClient())
+            {
+                Debug.LogError("Failed to start client connection");
+            }
+        }
+
+        protected void Disconnect()
+        {
+            if (NetworkManager.Singleton.IsClient && NetworkManager.Singleton.LocalClient.PlayerObject.TryGetComponent(out Bcom.SharedPlayground.PlaygroundPlayer playgroundPlayer))
+            {
+                playgroundPlayer.Disconnect();
+                connected = false;
+                Debug.Log("Client disconnected");
+            }
+        }
+
+        private void OnConnect(ulong clientId)
+        {
+            Debug.Log("Client connection successful!");
+            connected = true;
+        }
+
+        private void OnDisconnect(ulong clientId)
+        {
+            if (connected)
+            {
+                Disconnect();
+            }
+            else
+            {
+                Debug.LogWarning("OnDisconnect: Client not connected!");
+            }
+        }
+
+#if UNITY_EDITOR
         private void OnGUI()
         {
             GUILayout.BeginArea(new Rect(10, 10, 300, 300));
@@ -75,13 +122,14 @@ namespace Bcom.SharedPlayground
                     }
 
                     scrollPosition = GUILayout.BeginScrollView(scrollPosition);
-                    foreach (PrefabType prefabType in System.Enum.GetValues(typeof(PrefabType)))
+                    for (int i = 0; i < NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs.Count; ++i)
                     {
-                        if (GUILayout.Button($"Create {prefabType.ToString()}"))
+                        var prefab = NetworkManager.Singleton.NetworkConfig.Prefabs.Prefabs[i];
+                        if (GUILayout.Button($"Create {prefab.Prefab.name}"))
                         {
-                            if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
+                            if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
                             {
-                                playgroundPlayer.CreateObject(prefabType, FindObjectOfType<ScenePersistency>().gameObject);
+                                playgroundPlayer.CreateObject(i, FindObjectOfType<ScenePersistency>().gameObject);
                             }
                         }
                     }
@@ -91,7 +139,7 @@ namespace Bcom.SharedPlayground
 
                     if (GUILayout.Button("Drop Object"))
                     {
-                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
                         {
                             playgroundPlayer.DropObject();
                         }
@@ -99,7 +147,7 @@ namespace Bcom.SharedPlayground
 
                     if (GUILayout.Button("Grab Nearest Object"))
                     {
-                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer ))
+                        if (networkManager.LocalClient.PlayerObject.TryGetComponent(out PlaygroundPlayer playgroundPlayer))
                         {
                             var objectToGrab = PlaygroundInteractable.FindNearestInteractable(playgroundPlayer.transform.position);
                             if (objectToGrab)
@@ -161,5 +209,6 @@ namespace Bcom.SharedPlayground
 
             GUILayout.EndArea();
         }
+#endif // UNITY_EDITOR
     }
 }

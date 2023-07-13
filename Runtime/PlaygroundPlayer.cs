@@ -6,7 +6,7 @@ namespace Bcom.SharedPlayground
 
     public class PlaygroundPlayer : NetworkBehaviour
     {
-        public PlaygroundPrefabsScriptableObject spawnablePrefabsList;
+        public NetworkPrefabsList spawnablePrefabsList;
 
         public GameObject grabbedObject = null;
 
@@ -22,7 +22,7 @@ namespace Bcom.SharedPlayground
             base.OnNetworkDespawn();
         }
 
-        public void CreateObject(PrefabType prefabType, GameObject sceneRoot)
+        public void CreateObject(int prefabIndex, GameObject sceneRoot)
         {
             // Check if the player was already owning an object
             if (grabbedObject != null)
@@ -31,7 +31,7 @@ namespace Bcom.SharedPlayground
                 return;
             }
             // Create the new object and give its ownership to the player
-            CreateObjectServerRpc(prefabType, sceneRoot);
+            CreateObjectServerRpc(prefabIndex, sceneRoot);
         }
 
         public void DropObject()
@@ -89,10 +89,10 @@ namespace Bcom.SharedPlayground
         }
 
         [ServerRpc]
-        public void CreateObjectServerRpc(PrefabType prefabType, NetworkObjectReference sceneRootRef, ServerRpcParams serverRpcParams = default)
+        public void CreateObjectServerRpc(int prefabIndex, NetworkObjectReference sceneRootRef, ServerRpcParams serverRpcParams = default)
         {
             NetworkObject sceneRoot = sceneRootRef;
-            grabbedObject = Instantiate(spawnablePrefabsList.prefabs[(int)prefabType]);
+            grabbedObject = Instantiate(spawnablePrefabsList.PrefabList[prefabIndex].Prefab);
             grabbedObject.GetComponent<PlaygroundInteractable>().Animate(false);
             var newNetworkObject = grabbedObject.GetComponent<NetworkObject>();
             newNetworkObject.SpawnWithOwnership(serverRpcParams.Receive.SenderClientId);
@@ -109,7 +109,7 @@ namespace Bcom.SharedPlayground
         {
             grabbedObject = null;
             NetworkObject networkObject = clientObjectRef;
-            networkObject.RemoveOwnership();
+            networkObject.ChangeOwnership(NetworkManager.Singleton.LocalClientId);
             NetworkLog.LogInfoServer("Player gave object ownership back to the server");
             networkObject.GetComponent<PlaygroundInteractable>().Animate(true);
             // Notify all clients that this player has dropped its object

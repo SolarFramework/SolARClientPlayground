@@ -19,7 +19,7 @@ namespace Bcom.SharedPlayground
     {
         private static string PERSISTENT_SCENE_DATA_PATH => Path.Combine(Application.persistentDataPath, "sceneData.json");
 
-        public PlaygroundPrefabsScriptableObject spawnablePrefabsList;
+        public NetworkPrefabsList spawnablePrefabsList;
 
         public Transform sceneRoot;
 
@@ -44,7 +44,7 @@ namespace Bcom.SharedPlayground
 
             foreach (var objectToLoad in objectsToLoad.persistentObjects)
             {
-                GameObject loadedObject = Instantiate(spawnablePrefabsList.prefabs[(int)objectToLoad.objectType]);
+                GameObject loadedObject = Instantiate(spawnablePrefabsList.PrefabList[objectToLoad.prefabIndex].Prefab);
                 loadedObject.name = objectToLoad.objectName;
                 loadedObject.transform.localPosition = objectToLoad.position;
                 loadedObject.transform.localRotation = objectToLoad.rotation;

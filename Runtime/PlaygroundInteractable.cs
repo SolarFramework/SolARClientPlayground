@@ -1,42 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Bcom.SharedPlayground
 {
-
-    public enum PrefabType
-    {
-        Cube,
-        Sphere,
-        Arrow,
-        Stand_4dviews,
-        Stand_actronika,
-        Stand_artefacto,
-        Stand_bcom,
-        Stand_immersivedisplay,
-        Stand_inod,
-        Stand_inovr,
-        Stand_inria,
-        Stand_lynx,
-        Stand_meta,
-        Stand_noisemakers,
-        Stand_pico,
-        Stand_senseglove,
-        Exit,
-        Mascotte,
-        // TODO: add more object prefabs
-    };
-
     public class PlaygroundInteractable : MonoBehaviour
     {
         public static readonly HashSet<PlaygroundInteractable> interactables = new HashSet<PlaygroundInteractable>();
+
+        public NetworkPrefabsList networkPrefabsList;
         AnimateObject animateObject;
 
         void Awake()
         {
+            if (!networkPrefabsList)
+            {
+                Debug.LogError("PlaygroundInteractable is missing it's NetworkPrefabsList!");
+            }
+
             interactables.Add(this);
-            TryGetComponent<AnimateObject>(out animateObject);
+            TryGetComponent(out animateObject);
         }
 
         void OnDestroy()
@@ -73,10 +57,8 @@ namespace Bcom.SharedPlayground
             public Vector3 position = Vector3.zero;
             public Quaternion rotation = Quaternion.identity;
             public Vector3 scale = Vector3.one;
-            public PrefabType objectType = PrefabType.Cube;
+            public int prefabIndex = 0;
         };
-
-        public PrefabType m_type = PrefabType.Cube;
 
         public SerializableObjectData Serialize()
         {
@@ -85,9 +67,20 @@ namespace Bcom.SharedPlayground
             objectData.position = transform.localPosition;
             objectData.rotation = transform.localRotation;
             objectData.scale = transform.localScale;
-            objectData.objectType = m_type;
+            objectData.prefabIndex = GetNetworkPrefabIndex();
 
             return objectData;
+        }
+
+        private int GetNetworkPrefabIndex()
+        {
+            for (int i = 0; i < networkPrefabsList.PrefabList.Count; ++i)
+            {
+                if (name.Contains(networkPrefabsList.PrefabList[i].Prefab.name))
+                    return i;
+            }
+            Debug.LogError("Failed to find matching NetworkPrefab for this object");
+            return -1;
         }
     }
 }
