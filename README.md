@@ -1,3 +1,7 @@
+# DEPRECATED - This repo is no longer maintained
+
+----
+
 # SharedPlayground - Unity Package for 3D Assets Synchronization
 
 ## How to use
